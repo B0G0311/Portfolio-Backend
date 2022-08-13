@@ -32,14 +32,13 @@ class TechnologyView(APIView):
 
 
 class ProjectListApiView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         """
         List all the items for a given requested user
         """
 
-        projects = Project.objects.filter(user=request.user.id)
+        projects = Project.objects.all()
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -53,7 +52,6 @@ class ProjectListApiView(APIView):
             'description': request.data.get('description'),
             'technology': request.data.get('technology'),
             # 'image': request.data.get('image'),
-            'user': request.user.id,
         }
         serializer = ProjectSerializer(data=data)
         if serializer.is_valid():
@@ -64,23 +62,21 @@ class ProjectListApiView(APIView):
 
 
 class ProjectDetailApiView(APIView):
-    # add permission to check if user is authenticated
-    permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self, project_id, user_id):
+    def get_object(self, project_id):
         """
-        Helper method to get the object with given todo_id, and user_id
+        Helper method to get the object with given todo_id
         """
         try:
-            return Project.objects.get(id=project_id, user=user_id)
+            return Project.objects.get(id=project_id)
         except Project.DoesNotExist:
             return None
 
-    def get(self, request, project_id):
+    def get(self, project_id):
         """
-        Helper method to get the object with given project_id, and user_id
+        Helper method to get the object with given project_id
         """
-        project_instance = self.get_object(project_id, request.user.id)
+        project_instance = self.get_object(project_id)
         if not project_instance:
             return Response(
                 {"res": "Object with project id does not exist"},
@@ -95,7 +91,7 @@ class ProjectDetailApiView(APIView):
         """
         updates the project item with given project_id if exists
         """
-        project_instance = self.get_object(project_id, request.user.id)
+        project_instance = self.get_object(project_id)
         if not project_instance:
             return Response(
                 {"res": "Object with project id does not exist"},
@@ -106,7 +102,6 @@ class ProjectDetailApiView(APIView):
             'description': request.data.get('description'),
             'technology': request.data.get('technology'),
             # 'image': request.data.get('image'),
-            'user': request.user.id,
         }
         serializer = ProjectSerializer(instance=project_instance, data=data, partial=True)
         if serializer.is_valid():
@@ -115,11 +110,11 @@ class ProjectDetailApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Delete
-    def delete(self, request, project_id):
+    def delete(self, project_id):
         """
         Deletes the project item with given project_id if exists
         """
-        project_instance = self.get_object(project_id, request.user.id)
+        project_instance = self.get_object(project_id)
         if not project_instance:
             return Response(
                 {"res": "Object with project id does not exist"},
