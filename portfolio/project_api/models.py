@@ -14,7 +14,6 @@ class Project(models.Model):
     description = models.TextField()
     technology = models.ManyToManyField('Technology', related_name='project_api')
     image = models.ImageField(null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.title
