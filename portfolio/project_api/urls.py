@@ -7,7 +7,7 @@ from .views import (
 
 
 urlpatterns = [
-    path('api', ProjectListApiView.as_view()),
+    path('api/', ProjectListApiView.as_view()),
     path('api/<int:project_id>/', ProjectDetailApiView.as_view()),
     path('<technology>/', TechnologyView.as_view()),
 ]
