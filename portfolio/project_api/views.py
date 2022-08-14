@@ -1,19 +1,18 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import permissions
 from .models import Project, Technology
 from .serializers import ProjectSerializer, TechnologySerializer
 
 
 # Create your views here.
 class TechnologyView(APIView):
-    def get(self, request):
+    def get(self, tech_name):
         """
         List the technologies already created
         """
-        technologies = Technology.objects.all()
-        serializer = TechnologySerializer(technologies, many=True)
+        tech = Project.objects.get(technology=tech_name)
+        serializer = TechnologySerializer(tech_instance, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -51,7 +50,7 @@ class ProjectListApiView(APIView):
             'title': request.data.get('title'),
             'description': request.data.get('description'),
             'technology': request.data.get('technology'),
-            # 'image': request.data.get('image'),
+            'image': request.data.get('image'),
         }
         serializer = ProjectSerializer(data=data)
         if serializer.is_valid():
@@ -101,7 +100,7 @@ class ProjectDetailApiView(APIView):
             'title': request.data.get('title'),
             'description': request.data.get('description'),
             'technology': request.data.get('technology'),
-            # 'image': request.data.get('image'),
+            'image': request.data.get('image'),
         }
         serializer = ProjectSerializer(instance=project_instance, data=data, partial=True)
         if serializer.is_valid():

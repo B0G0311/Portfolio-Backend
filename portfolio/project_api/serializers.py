@@ -2,14 +2,16 @@ from rest_framework import serializers
 from .models import Project, Technology
 
 
+# Remember to move ProjectSerializer under TechnologySerializer
 class ProjectSerializer(serializers.ModelSerializer):
+    technology = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Project
-        fields = ["id", "title", "description", "technology", "image"]
+        fields = ["title", "description", "technology", "image"]
 
 
 class TechnologySerializer(serializers.ModelSerializer):
     class Meta:
         model = Technology
-        fields = ["technology"]
-
+        fields = '__all__'
